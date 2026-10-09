@@ -1,6 +1,10 @@
 # SETUP — bootstrap a new project from this harness (one-time, ~15 min)
 
-Human executes; agents may guide. Do it in the NEW project root (a copy of this `generic/` folder, ideally already `git init`-ed with an empty `main`).
+Human executes; agents may guide. Run from the new project root (a clone of this template —
+for a clean history: `git clone <this-repo> my-app && cd my-app && rm -rf .git && git init -b main`).
+
+> **Network note:** `src/docker/php/certs/` ships a corporate TLS-interception CA
+> (see ADR-0010). If you're not behind Zscaler-style MITM, delete the `.crt` file before the first build.
 
 ## 1. Create the Laravel app inside `src/`
 ```bash
@@ -48,6 +52,12 @@ harness/scripts/check.sh             # the CI equivalent (coverage min=100 from 
 - Project name sweep: `AGENTS.md`, `src/AGENTS.md`, `src/docker-compose.yml` (`name:`), `.env` (`APP_NAME`, `DB_DATABASE`), `src/bruno/opencollection.yml`.
 - Decide + write ADRs: DB (postgres kept?), tenancy yes/no, billing yes/no, realtime yes/no — the seeded ADR-000x files show the format.
 
-## 7. Daily loop afterwards
+## 7. Wire the hooks (once per clone)
+```bash
+harness/scripts/install-hooks.sh   # .githooks/pre-commit → security-audit gate
+bash harness/scripts/selftest.sh   # prove the PR gates both directions
+```
+
+## 8. Daily loop afterwards
 Session start: tail `harness/progress.md` → `git log --oneline -15` → `harness/init.sh` → smoke.
 Module flow: `new-feature` skill → spec → **STOP for human approval** → `tdd-cycle` per task → verification evidence → human runs the proposed commits (prefixed `SECURITY_AUDIT=off`).

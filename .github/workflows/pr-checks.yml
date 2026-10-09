@@ -1,0 +1,24 @@
+name: PR gates
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  gate-selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the gate scripts themselves (both directions)
+        run: bash harness/scripts/selftest.sh
+  spec-required:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: bash harness/scripts/gate-spec-required.sh "origin/${{ github.base_ref }}"
+        env: { GIT_REMOTE_ORIGIN: ${{ github.server_url }}/${{ github.repository }} }
+  tdd-order:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: bash harness/scripts/gate-tdd-order.sh "origin/${{ github.base_ref }}"
