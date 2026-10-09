@@ -1,0 +1,10 @@
+.DS_Store
+src/vendor/
+src/node_modules/
+src/.env
+src/storage/*.key
+src/storage/cobertura.xml
+
+# security-audit working artifacts (regenerated per commit; keep dir)
+harness/audits/current/*
+!harness/audits/current/.gitkeep
